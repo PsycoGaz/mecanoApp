@@ -12,7 +12,9 @@ class VoitureController extends Controller
      */
     public function index()
     {
-        return response()->json(Voiture::all());
+        // Get all cars
+        $voitures = Voiture::with('client')->get();
+        return response()->json($voitures);
     }
 
     /**
@@ -24,7 +26,10 @@ class VoitureController extends Controller
             'marque' => 'required|string|max:255',
             'modele' => 'required|string|max:255',
             'annee' => 'required|integer|min:1900|max:'.date('Y'),
-            'client_id' => 'required|exists:clients,id',
+            'img' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'matricule' => 'required|string|max:255',
+            'client_id' => 'required|exists:clients,id'
+            ,
         ]);
 
         $voiture = Voiture::create($validated);
@@ -48,6 +53,8 @@ class VoitureController extends Controller
             'marque' => 'sometimes|string|max:255',
             'modele' => 'sometimes|string|max:255',
             'annee' => 'sometimes|integer|min:1900|max:'.date('Y'),
+            'img' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'matricule' => 'sometimes|string|max:255',
             'client_id' => 'sometimes|exists:clients,id',
         ]);
 

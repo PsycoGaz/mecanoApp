@@ -31,6 +31,7 @@ class PieceDetacheeController extends Controller
         $validatedData = $request->validate([
             'nom' => 'required|string|max:255',
             'prix' => 'required|numeric',
+            'qtestock' => 'required|integer',
             'reparation_id' => 'sometimes|exists:reparations,id',
         ]);
 
@@ -68,6 +69,7 @@ class PieceDetacheeController extends Controller
         $validatedData = $request->validate([
             'nom' => 'required|string|max:255',
             'prix' => 'required|numeric',
+            'qtestock' => 'required|integer',
             'reparation_id' => 'sometimes|exists:reparations,id',
         ]);
 

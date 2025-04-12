@@ -15,7 +15,7 @@ class ReparationController extends Controller
     public function index()
     {
         // Get all reparations
-        $reparations = Reparation::with(['voiture', 'technicien', 'piece'])->get();
+        $reparations = Reparation::with(['voiture', 'technicien', 'piece',])->get();
         return response()->json($reparations);
     }
 
@@ -32,6 +32,7 @@ class ReparationController extends Controller
             'date' => 'required|date',
             'cout' => 'required|numeric',
             'voiture_id' => 'required|exists:voitures,id',
+            'km' => 'required|integer',
             'technicien_id' => 'required|exists:employes,id',
             'piece_id' => 'sometimes|exists:piece_detachees,id',
         ]);
@@ -71,6 +72,7 @@ class ReparationController extends Controller
             'date' => 'required|date',
             'cout' => 'required|numeric',
             'voiture_id' => 'required|exists:voitures,id',
+            'km' => 'required|integer',
             'technicien_id' => 'required|exists:employes,id',
             'piece_id' => 'sometimes|exists:piece_detachees,id',
         ]);
