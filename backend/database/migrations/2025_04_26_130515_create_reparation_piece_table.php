@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('statistiques', function (Blueprint $table) {
+        Schema::create('reparation_piece', function (Blueprint $table) {
             $table->id();
-            $table->integer('nb_reparations');
-            $table->decimal('ca_total', 12, 2);
-            $table->json('top_clients')->nullable();
+            $table->foreignId('reparation_id')->constrained()->onDelete('cascade');
+            $table->foreignId('piece_id')->constrained('piece_detachees')->onDelete('cascade');
+            //$table->integer('quantity')->default(1);
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('statistiques');
+        Schema::dropIfExists('reparation_piece');
     }
 };

@@ -9,11 +9,8 @@ class PieceDetachee extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nom', 'prix', 'reparation_id','qtestock '];
+    protected $fillable = ['nom', 'prix', 'qtestock'];
 
-    public function reparation()
-    {
-        return $this->belongsTo(Reparation::class);
-    }
+    
 }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ClientController;
@@ -27,6 +28,7 @@ Route::post('/voitures', [VoitureController::class, 'store']); // Add a new car
 Route::get('/voitures/{id}', [VoitureController::class, 'show']); // Get a specific car
 Route::put('/voitures/{id}', [VoitureController::class, 'update']); // Update a car
 Route::delete('/voitures/{id}', [VoitureController::class, 'destroy']); // Delete a car
+Route::get('voitures/client/{clientId}', [VoitureController::class, 'getByClientId']);
 // Employe (Employee) routes
 Route::get('/employes', [EmployeController::class, 'index']);  // Get all employees with repairs
 Route::post('/employes', [EmployeController::class, 'store']); // Add a new employee
@@ -45,6 +47,7 @@ Route::post('/reparations', [ReparationController::class, 'store']); // Add a ne
 Route::get('/reparations/{id}', [ReparationController::class, 'show']); // Get a specific reparation
 Route::put('/reparations/{id}', [ReparationController::class, 'update']); // Update a specific reparation
 Route::delete('/reparations/{id}', [ReparationController::class, 'destroy']); // Delete a reparation
+Route::get('reparations/car/{carId}', [ReparationController::class, 'getByCarId']);
 // Statistique routes
 Route::get('/statistiques', [StatistiqueController::class, 'index']); // Get all statistics
 Route::post('/statistiques', [StatistiqueController::class, 'store']); // Create a new statistic
@@ -54,3 +57,4 @@ Route::delete('/statistiques/{id}', [StatistiqueController::class, 'destroy']); 
 
 // Generate real-time statistics
 Route::get('/generate-stats', [StatistiqueController::class, 'generateStats']);
+Route::post('login', [AuthController::class, 'login']);

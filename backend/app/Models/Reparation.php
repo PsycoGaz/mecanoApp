@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Reparation extends Model
 {
     use HasFactory;
-    protected $fillable = ['date', 'cout', 'voiture_id', 'technicien_id','piece_id','km'];
+
+    protected $fillable = ['date', 'cout', 'voiture_id', 'technicien_id', 'km'];
 
     public function voiture()
     {
@@ -20,21 +21,9 @@ class Reparation extends Model
         return $this->belongsTo(Employe::class, 'technicien_id');
     }
 
-    // public function pieces()
-    // {
-    //     return $this->hasMany(PieceDetachee::class);
-    // }
-
-    public function piece()
-    {
-        return $this->belongsTo(PieceDetachee::class, 'piece_id');
-    }
-
     // Relation pour plusieurs pièces
     public function pieces()
     {
-        return $this->hasMany(PieceDetachee::class);
+        return $this->belongsToMany(PieceDetachee::class, 'reparation_piece', 'reparation_id', 'piece_id');
     }
-
 }
-

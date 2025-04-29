@@ -16,6 +16,8 @@ return new class extends Migration
         $table->string('marque');
         $table->string('modele');
         $table->integer('annee');
+        $table->string('matricule')->unique();
+        $table->string('img')->nullable();
         $table->foreignId('client_id')->constrained()->onDelete('cascade');
         $table->timestamps();
     });

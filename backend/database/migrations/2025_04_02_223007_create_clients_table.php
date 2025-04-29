@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
-            $table->string('nom');
-            $table->string('prenom');
-            $table->string('email')->unique();
+            $table->string('nom', 50);
+            $table->string('prenom', 50);
+            $table->string('email', 100)->unique();
+            $table->string('mdp', 255); // Longueur suffisante pour les hash bcrypt
+            $table->string('role');
             $table->timestamps();
+        
         });
     }
     

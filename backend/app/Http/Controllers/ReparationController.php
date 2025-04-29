@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PieceDetachee;
 use App\Models\Reparation;
 use Illuminate\Http\Request;
 
@@ -12,12 +13,19 @@ class ReparationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    // public function index()
+    // {
+    //     // Get all reparations
+    //     $reparations = Reparation::with(['voiture', 'technicien', 'piece',])->get();
+    //     return response()->json($reparations);
+    // }
+
     public function index()
-    {
-        // Get all reparations
-        $reparations = Reparation::with(['voiture', 'technicien', 'piece',])->get();
-        return response()->json($reparations);
-    }
+{
+    // Charger toutes les réparations avec les relations voiture, technicien et pieces
+    $reparations = Reparation::with(['voiture', 'technicien', 'pieces'])->get();
+    return response()->json($reparations);
+}
 
     /**
      * Store a newly created reparation in storage.
@@ -25,23 +33,51 @@ class ReparationController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        // Validate the request data
-        $validatedData = $request->validate([
-            'date' => 'required|date',
-            'cout' => 'required|numeric',
-            'voiture_id' => 'required|exists:voitures,id',
-            'km' => 'required|integer',
-            'technicien_id' => 'required|exists:employes,id',
-            'piece_id' => 'sometimes|exists:piece_detachees,id',
-        ]);
+    // public function store(Request $request)
+    // {
+    //     // Validate the request data
+    //     $validatedData = $request->validate([
+    //         'date' => 'required|date',
+    //         'cout' => 'required|numeric',
+    //         'voiture_id' => 'required|exists:voitures,id',
+    //         'km' => 'required|integer',
+    //         'technicien_id' => 'required|exists:employes,id',
+    //         'piece_id' => 'sometimes|exists:piece_detachees,id',
+    //     ]);
 
-        // Create a new reparation
-        $reparation = Reparation::create($validatedData);
-        return response()->json($reparation, 201);
+    //     // Create a new reparation
+    //     $reparation = Reparation::create($validatedData);
+    //     return response()->json($reparation, 201);
+    // }
+    // public function store(Request $request)
+    // {
+    //     $reparation = Reparation::create($request->only(['date', 'cout', 'km', 'voiture_id', 'technicien_id']));
+    
+    //     if ($request->has('pieces')) {
+    //         $reparation->pieces()->attach($request->pieces);
+    //     }
+    
+    //     return response()->json($reparation->load(['voiture', 'technicien', 'pieces']));
+    // }
+    public function store(Request $request)
+{
+    // Crée la réparation
+    $reparation = Reparation::create($request->only(['date', 'cout', 'km', 'voiture_id', 'technicien_id']));
+
+    // Vérifie que toutes les pièces existent dans la table `piece_detachees`
+    $piecesExistantes = PieceDetachee::whereIn('id', $request->pieces)->pluck('id')->toArray();
+
+    // Si toutes les pièces sont valides, on les attache
+    if (count($piecesExistantes) == count($request->pieces)) {
+        $reparation->pieces()->attach($request->pieces);
+    } else {
+        return response()->json(['error' => 'Une ou plusieurs pièces n\'existent pas'], 400);
     }
 
+    return response()->json($reparation->load(['voiture', 'technicien', 'pieces']));
+}
+
+    
     /**
      * Display the specified reparation.
      *
@@ -95,5 +131,16 @@ class ReparationController extends Controller
         $reparation->delete();
 
         return response()->json(['message' => 'Reparation deleted successfully']);
+    }
+
+    public function getByCarId($carId)
+    {
+        // Fetch reparations associated with the given car ID
+        $reparations = Reparation::with(['voiture', 'technicien', 'pieces'])
+            ->where('voiture_id', $carId)
+            ->get();
+
+        // Return the reparations as a JSON response
+        return response()->json($reparations);
     }
 }

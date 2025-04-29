@@ -13,8 +13,9 @@ return new class extends Migration
 {
     Schema::create('reparations', function (Blueprint $table) {
         $table->id();
-        $table->dateTime('date');
-        $table->decimal('cout', 8, 2);
+        $table->date('date');
+        $table->decimal('cout', 10, 2);
+        $table->integer('km');
         $table->foreignId('voiture_id')->constrained()->onDelete('cascade');
         $table->foreignId('technicien_id')->constrained('employes')->onDelete('cascade');
         $table->timestamps();

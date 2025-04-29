@@ -12,11 +12,11 @@ return new class extends Migration
     public function up()
 {
     Schema::create('piece_detachees', function (Blueprint $table) {
-        $table->id();
-        $table->string('nom');
-        $table->decimal('prix', 8, 2);
-        $table->foreignId('reparation_id')->constrained()->onDelete('cascade');
-        $table->timestamps();
+        $table->id(); // Clé primaire
+        $table->string('nom'); // Nom de la pièce
+        $table->decimal('prix', 10, 2); // Prix de la pièce
+        $table->integer('qtestock')->default(0); // Quantité en stock avec une valeur par défaut
+        $table->timestamps(); // Colonnes created_at et updated_at
     });
 }
 

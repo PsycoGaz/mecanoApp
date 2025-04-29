@@ -13,11 +13,14 @@ return [
     |
     */
 
-    'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
-    ],
-
+    // 'defaults' => [
+    //     'guard' => env('AUTH_GUARD', 'web'), // Définit le guard par défaut
+    //     'passwords' => env('AUTH_PASSWORD_BROKER', 'clients'), // Définit le broker pour les mots de passe
+    // ],
+'defaults' => [
+    'guard' => 'api',
+    'passwords' => 'clients',
+],
     /*
     |--------------------------------------------------------------------------
     | Authentication Guards
@@ -31,16 +34,21 @@ return [
     | users are actually retrieved out of your database or other storage
     | system used by the application. Typically, Eloquent is utilized.
     |
-    | Supported: "session"
+    | Supported: "session", "jwt"
     |
     */
 
-    'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+   'guards' => [
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'clients',
     ],
+    'api' => [
+        'driver' => 'jwt',
+        'provider' => 'clients',
+    ],
+],
+
 
     /*
     |--------------------------------------------------------------------------
@@ -59,18 +67,12 @@ return [
     |
     */
 
-    'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
-        ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+   'providers' => [
+    'clients' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Client::class,
     ],
-
+],
     /*
     |--------------------------------------------------------------------------
     | Resetting Passwords
@@ -90,14 +92,35 @@ return [
     |
     */
 
-    'passwords' => [
-        'users' => [
-            'provider' => 'users',
-            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-            'expire' => 60,
-            'throttle' => 60,
-        ],
+    // 'passwords' => [
+    //     'clients' => [
+    //         'provider' => 'clients', // Utilise le provider 'clients'
+    //         'table' => 'password_reset_tokens', // Table pour les tokens de réinitialisation
+    //         'expire' => 60, // Durée de validité du token (en minutes)
+    //         'throttle' => 60, // Temps d'attente avant de générer un nouveau token
+    //     ],
+    // ],
+
+'passwords' => [
+    'clients' => [
+        'provider' => 'clients',
+        'table' => 'password_reset_tokens',
+        'expire' => 60,
+        'throttle' => 60,
+        
+        // Ajoutez ces lignes si vous utilisez Laravel 9+ (optionnel mais recommandé)
+        'connection' => env('DB_CONNECTION', 'mysql'), // Utilise la même connexion DB
+        'hash' => env('PASSWORD_HASH', 'bcrypt'), // Force l'algorithme bcrypt
     ],
+    
+    // Configuration par défaut pour les users (si vous en avez besoin)
+    'users' => [
+        'provider' => 'users',
+        'table' => 'password_reset_tokens',
+        'expire' => 60,
+        'throttle' => 60,
+    ],
+],
 
     /*
     |--------------------------------------------------------------------------
@@ -110,6 +133,6 @@ return [
     |
     */
 
-    'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
+    'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800), // Timeout de confirmation (en secondes)
 
 ];

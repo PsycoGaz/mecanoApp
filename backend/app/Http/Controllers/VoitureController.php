@@ -26,10 +26,10 @@ class VoitureController extends Controller
             'marque' => 'required|string|max:255',
             'modele' => 'required|string|max:255',
             'annee' => 'required|integer|min:1900|max:'.date('Y'),
-            'img' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            // 'img' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'img' => 'sometimes|url|max:2048',
             'matricule' => 'required|string|max:255',
-            'client_id' => 'required|exists:clients,id'
-            ,
+            'client_id' => 'required|exists:clients,id',
         ]);
 
         $voiture = Voiture::create($validated);
@@ -53,7 +53,8 @@ class VoitureController extends Controller
             'marque' => 'sometimes|string|max:255',
             'modele' => 'sometimes|string|max:255',
             'annee' => 'sometimes|integer|min:1900|max:'.date('Y'),
-            'img' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            // 'img' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'img' => 'sometimes|url|max:2048',
             'matricule' => 'sometimes|string|max:255',
             'client_id' => 'sometimes|exists:clients,id',
         ]);
@@ -71,5 +72,17 @@ class VoitureController extends Controller
         $voiture = Voiture::findOrFail($id);
         $voiture->delete();
         return response()->json(['message' => 'Voiture supprimée avec succès']);
+    }
+
+    /**
+     * Get cars by client ID.
+     */
+    public function getByClientId($clientId)
+    {
+        // Fetch cars associated with the given client ID
+        $voitures = Voiture::where('client_id', $clientId)->get();
+
+        // Return the cars as a JSON response
+        return response()->json($voitures);
     }
 }
