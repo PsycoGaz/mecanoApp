@@ -59,24 +59,38 @@ class ReparationController extends Controller
     
     //     return response()->json($reparation->load(['voiture', 'technicien', 'pieces']));
     // }
+ 
     public function store(Request $request)
-{
-    // Crée la réparation
-    $reparation = Reparation::create($request->only(['date', 'cout', 'km', 'voiture_id', 'technicien_id']));
-
-    // Vérifie que toutes les pièces existent dans la table `piece_detachees`
-    $piecesExistantes = PieceDetachee::whereIn('id', $request->pieces)->pluck('id')->toArray();
-
-    // Si toutes les pièces sont valides, on les attache
-    if (count($piecesExistantes) == count($request->pieces)) {
-        $reparation->pieces()->attach($request->pieces);
-    } else {
-        return response()->json(['error' => 'Une ou plusieurs pièces n\'existent pas'], 400);
+    {
+        // Create the reparation
+        $reparation = Reparation::create($request->only(['date', 'cout', 'km', 'voiture_id', 'technicien_id']));
+    
+        // Verify that all pieces exist in the `piece_detachees` table
+        $piecesExistantes = PieceDetachee::whereIn('id', $request->pieces)->pluck('id')->toArray();
+    
+        // If all pieces are valid, attach them
+        if (count($piecesExistantes) == count($request->pieces)) {
+            $reparation->pieces()->attach($request->pieces);
+        } else {
+            return response()->json(['error' => 'Une ou plusieurs pièces n\'existent pas'], 400);
+        }
+    
+        // Loop through the pieces and update their stock
+        foreach ($request->pieces as $pieceId) {
+            $piece = PieceDetachee::find($pieceId);
+    
+            // Check if the piece exists and has sufficient stock
+            if ($piece && $piece->qtestock > 0) {
+                $piece->qtestock -= 1; // Decrease stock by 1
+                $piece->save(); // Save the updated stock
+            } else {
+                return response()->json(['error' => 'La pièce n\'existe pas ou le stock est insuffisant'], 400);
+            }
+        }
+    
+        // Return the created reparation with its relationships
+        return response()->json($reparation->load(['voiture', 'technicien', 'pieces']));
     }
-
-    return response()->json($reparation->load(['voiture', 'technicien', 'pieces']));
-}
-
     
     /**
      * Display the specified reparation.
